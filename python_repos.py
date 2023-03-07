@@ -1,4 +1,6 @@
 import requests
+import pygal
+from pygal.style import LightColorizedStyle as LCS, LightenStyle as LS
 
 url = 'https://api.github.com/search/repositories?q=language:python&sort=stars'
 
@@ -23,15 +25,21 @@ for key in sorted(repo_dict.keys()):
     print(key)
 print("\nВыбрана информация из первого случайного  репозитория:")
 """
-i = 1
+
+names, stars = [],[]
 for repo_dict in repo_dicts:
-    print("********* " + str(i) + " ***********")
-    print('Имя:', repo_dict['name'])
-    print('Владелец:', repo_dict['owner']['login'])
-    print('Звезды:', repo_dict['stargazers_count'])
-    print('Репозиторий:', repo_dict['html_url'])
-    print('Создание:', repo_dict['created_at'])
-    print('Обновление:', repo_dict['updated_at'])
-    print('Описание:', repo_dict['description'])
-    print("************************")
-    i += 1
+    names.append(repo_dict['name'])
+    stars.append(repo_dict['stargazers_count'])
+
+
+# building a visualization.
+my_style = LS('#333366', base_style=LCS)
+chart = pygal.Bar(style=my_style, x_label_rotation=50, show_legend=False)
+chart.title = 'Самые звездные Python проекты на GitHub'
+chart.x_labels = names
+
+chart.add('', stars)
+chart.render_to_file('python_repos.svg')
+
+
+
